@@ -8,3 +8,8 @@ export interface IRecipe extends Document {
   ingredients: ObjectId[];
   categories: ObjectId[];
 }
+
+export interface IRecipeAggregation extends Omit<IRecipe, 'ingredients' | 'categories'> {
+  ingredients: IIngredient[];
+  categories: ICategory[];
+}
