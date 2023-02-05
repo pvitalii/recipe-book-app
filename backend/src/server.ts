@@ -3,6 +3,7 @@ import * as dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { AppRouter } from './routes';
 import connectMongoDB from './database/mongo-connect';
+import { errorHandler } from './middlewares/error-handler';
 
 export class Server {
   private app: express.Application;
@@ -12,6 +13,7 @@ export class Server {
     this.initConfig();
     this.initMiddlewares();
     this.initRoutes();
+    this.initErrorHandling();
     this.connectToDb();
     this.startListening();
   }
@@ -32,6 +34,10 @@ export class Server {
   initRoutes() {
     const apiRouter = new AppRouter(this.app);
     apiRouter.init();
+  }
+
+  initErrorHandling() {
+    this.app.use(errorHandler);
   }
 
   connectToDb() {
