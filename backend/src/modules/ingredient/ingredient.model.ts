@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose';
-import { IIngredient } from './ingredient.types';
+import { Ingredient } from './interfaces/ingredient.interface';
 
-const ingredientSchema = new Schema({
+const ingredientSchema = new Schema<Ingredient>({
   quantity: {
     type: String,
     required: true
@@ -19,6 +19,4 @@ const ingredientSchema = new Schema({
   }
 });
 
-const Ingredient = model<IIngredient>('Ingredient', ingredientSchema);
-
-export default Ingredient;
+export const IngredientModel = model<Ingredient>('Ingredient', ingredientSchema);

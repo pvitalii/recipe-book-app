@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose';
-import { IRecipe } from './recipe.types';
+import { Recipe } from './interfaces/recipe.interface';
 
-const recipeSchema = new Schema({
+const recipeSchema = new Schema<Recipe>({
   name: {
     type: String,
     required: true,
@@ -25,6 +25,4 @@ const recipeSchema = new Schema({
   }
 });
 
-const Recipe = model<IRecipe>('Recipe', recipeSchema);
-
-export default Recipe;
+export const RecipeModel = model<Recipe>('Recipe', recipeSchema);

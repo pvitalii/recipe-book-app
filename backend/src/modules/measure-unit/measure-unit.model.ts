@@ -1,7 +1,7 @@
 import { model, Schema } from 'mongoose';
-import { IMeasureUnit } from './measure-unit.types';
+import { MeasureUnit } from './interfaces/measure-unit.interface';
 
-const measureUnitSchema = new Schema({
+const measureUnitSchema = new Schema<MeasureUnit>({
   name: {
     type: String,
     required: true,
@@ -9,6 +9,4 @@ const measureUnitSchema = new Schema({
   }
 });
 
-const MeasureUnit = model<IMeasureUnit>('MeasureUnit', measureUnitSchema);
-
-export default MeasureUnit;
+export const MeasureUnitModel = model<MeasureUnit>('MeasureUnit', measureUnitSchema);

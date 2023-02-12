@@ -1,38 +1,27 @@
-import { IIdRequestParams, ITypedPutRequest, ITypedRequestBody } from '../../common/types';
-import { CreateRecipeDto } from './dto/create-recipe.dto';
-import { PutRecipeDto } from './dto/put-recipe.dto';
-import { RecipeService } from './recipe.service';
+import { boundClass } from 'autobind-decorator';
+import { NextFunction, Request, Response } from 'express';
+import { BaseController } from '../../common/base.controller';
+import { RecipeService, recipeServiceInstance } from './recipe.service';
 
-class RecipeController {
-  constructor(private recipeService: RecipeService) {}
-
-  async findAllRecipes() {
-    const recipes = await this.recipeService.findAll();
-    return recipes;
+@boundClass
+class RecipeController<T> extends BaseController<T> {
+  constructor(private recipeService: RecipeService<T>) {
+    super(recipeService);
   }
 
-  async findRecipeById(req: IIdRequestParams) {
+  override async findAll(_req: Request, res: Response) {
+    return res.json(await this.recipeService.findAllAndAggregate());
+  }
+
+  override async findById(req: Request<{ id: string }>, res: Response, next: NextFunction) {
     const { id } = req.params;
-    const recipe = await this.recipeService.findById(id);
-    return recipe;
-  }
-
-  async createRecipe(req: ITypedRequestBody<CreateRecipeDto>) {
-    const newRecipe = await this.recipeService.createOne(req.body);
-    return newRecipe;
-  }
-
-  async updateRecipe(req: ITypedPutRequest<PutRecipeDto>) {
-    const { id } = req.params;
-    const updatedRecipe = await this.recipeService.updateOne(id, req.body);
-    return updatedRecipe;
-  }
-
-  async deleteRecipe(req: IIdRequestParams) {
-    const { id } = req.params;
-    await this.recipeService.deleteOne(id);
+    try {
+      const document = await this.recipeService.findByIdAndAggregate(id);
+      return res.json(this.existCheck(document));
+    } catch (e) {
+      next(e);
+    }
   }
 }
 
-const recipeController = new RecipeController(new RecipeService());
-export default recipeController;
+export const recipeController = new RecipeController(recipeServiceInstance);

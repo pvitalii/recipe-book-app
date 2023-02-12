@@ -1,52 +1,25 @@
-import express from 'express';
-import * as dotenv from 'dotenv';
-import bodyParser from 'body-parser';
-import { AppRouter } from './routes';
+import Express, { json, urlencoded } from 'express';
+import 'dotenv/config';
+import 'reflect-metadata';
+import cookieParser from 'cookie-parser';
 import connectMongoDB from './database/mongo-connect';
 import { errorHandler } from './middlewares/error-handler';
+import { appRouter } from './routes';
+import './middlewares/auth/jwt-strategy';
+import './middlewares/auth/local-strategy';
 
-export class Server {
-  private app: express.Application;
+const app = Express();
 
-  start() {
-    this.initServer();
-    this.initConfig();
-    this.initMiddlewares();
-    this.initRoutes();
-    this.initErrorHandling();
-    this.connectToDb();
-    this.startListening();
-  }
+connectMongoDB();
 
-  initServer() {
-    this.app = express();
-  }
+app.use(json());
+app.use(urlencoded({ extended: false }));
+app.use(cookieParser());
 
-  initConfig() {
-    dotenv.config();
-  }
+app.use('/api', appRouter);
 
-  initMiddlewares() {
-    this.app.use(bodyParser.json());
-    this.app.use(bodyParser.urlencoded({ extended: false }));
-  }
+app.use(errorHandler);
 
-  initRoutes() {
-    const apiRouter = new AppRouter(this.app);
-    apiRouter.init();
-  }
-
-  initErrorHandling() {
-    this.app.use(errorHandler);
-  }
-
-  connectToDb() {
-    connectMongoDB();
-  }
-
-  startListening() {
-    const port = process.env.PORT || 7000;
-    // eslint-disable-next-line no-console
-    this.app.listen(port, () => console.log(`Server started on port ${port}`));
-  }
-}
+const port = process.env.PORT || 7000;
+// eslint-disable-next-line no-console
+app.listen(port, () => console.log(`Server started on port ${port}`));

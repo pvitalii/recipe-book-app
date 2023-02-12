@@ -1,28 +1,36 @@
-import mongoose from 'mongoose';
-import { CreateRecipeDto } from './dto/create-recipe.dto';
-import { PutRecipeDto } from './dto/put-recipe.dto';
-import Recipe from './recipe.model';
-import { IRecipeAggregation } from './recipe.types';
+import mongoose, { Model } from 'mongoose';
+import { CRUDService } from '../../common/crud.service';
+import { RecipeAggregation } from './interfaces/recipe-aggregation.interface';
+import { Recipe } from './interfaces/recipe.interface';
+import { RecipeModel } from './recipe.model';
 
-export class RecipeService {
-  async findAll() {
-    const recipes = await Recipe.aggregate<IRecipeAggregation>([
-      {
-        $lookup: {
-          from: 'ingredients',
-          localField: 'ingredients',
-          foreignField: '_id',
-          as: 'ingredients'
-        }
-      },
-      {
-        $lookup: {
-          from: 'categories',
-          localField: 'categories',
-          foreignField: '_id',
-          as: 'categories'
-        }
-      },
+export class RecipeService<T = Recipe> extends CRUDService<T> {
+  constructor(private recipeModel: Model<T>) {
+    super(recipeModel);
+  }
+
+  private lookupIngredientsAndCategories = [
+    {
+      $lookup: {
+        from: 'ingredients',
+        localField: 'ingredients',
+        foreignField: '_id',
+        as: 'ingredients'
+      }
+    },
+    {
+      $lookup: {
+        from: 'categories',
+        localField: 'categories',
+        foreignField: '_id',
+        as: 'categories'
+      }
+    }
+  ];
+
+  async findAllAndAggregate(): Promise<RecipeAggregation[]> {
+    const recipes = await this.recipeModel.aggregate<RecipeAggregation>([
+      ...this.lookupIngredientsAndCategories,
       {
         $match: {
           'ingredients.productId': new mongoose.Types.ObjectId('63da00570690a62062227716'),
@@ -33,22 +41,17 @@ export class RecipeService {
     return recipes;
   }
 
-  async findById(id: string) {
-    const recipe = await Recipe.findById(id).populate('ingredients').populate('categories');
+  async findByIdAndAggregate(id: string) {
+    const recipe = await this.recipeModel.aggregate<RecipeAggregation>([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id)
+        }
+      },
+      ...this.lookupIngredientsAndCategories
+    ]);
     return recipe;
   }
-
-  async createOne(dto: CreateRecipeDto) {
-    const newRecipe = await Recipe.create(dto);
-    return newRecipe;
-  }
-
-  async updateOne(id: string, dto: PutRecipeDto) {
-    const updatedRecipe = await Recipe.findByIdAndUpdate(id, dto, { new: true });
-    return updatedRecipe;
-  }
-
-  async deleteOne(id: string) {
-    await Recipe.findByIdAndDelete(id);
-  }
 }
+
+export const recipeServiceInstance = new RecipeService(RecipeModel);

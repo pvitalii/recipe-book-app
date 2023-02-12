@@ -1,8 +1,8 @@
-import { IsEmpty, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class PutProductDto {
   @IsOptional()
   @IsString()
-  @IsEmpty()
+  @IsNotEmpty()
   name?: string;
 }
