@@ -3,9 +3,10 @@ import { RoutePaths } from '../../common/consts';
 import { bodyValidator } from '../../middlewares/body-validator';
 import { CreateProductDto } from '../../modules/product/dto/create-product.dto';
 import { PutProductDto } from '../../modules/product/dto/put-product.dto';
-import { productController } from '../../modules/product/product.controller';
+import { ProductController } from '../../modules/product/product.controller';
 
 export const productRouter: Router = Router();
+const productController = new ProductController();
 
 productRouter
   .get(RoutePaths.FIND_ALL, productController.findAll)

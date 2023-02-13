@@ -58,5 +58,3 @@ export class TokenService {
     return jwt.verify(token, this.secretKeys.ResetTokenSecret as jwt.Secret);
   }
 }
-
-export const tokenServiceInstance = new TokenService();

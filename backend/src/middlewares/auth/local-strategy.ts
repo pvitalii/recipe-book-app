@@ -1,9 +1,11 @@
 import passport from 'passport';
 import passportLocal from 'passport-local';
-import { hashServiceInstance } from '../../modules/auth/services/hash.service';
-import { userServiceInstance } from '../../modules/user/user.service';
+import { HashService } from '../../modules/auth/services/hash.service';
+import { UserService } from '../../modules/user/user.service';
 
 const LocalStrategy = passportLocal.Strategy;
+const userServiceInstance = new UserService();
+const hashServiceInstance = new HashService();
 
 async function validateUserByEmail(email: string, password: string) {
   const user = await userServiceInstance.findUserByEmail(email);

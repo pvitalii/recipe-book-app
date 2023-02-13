@@ -2,9 +2,10 @@ import passport from 'passport';
 import passportJwt, { ExtractJwt, StrategyOptions } from 'passport-jwt';
 import { Request } from 'express';
 import { JwtPayload } from '../../modules/auth/interfaces/jwt-payload.interface';
-import { userServiceInstance } from '../../modules/user/user.service';
+import { UserService } from '../../modules/user/user.service';
 
 const JwtStrategy = passportJwt.Strategy;
+const userServiceInstance = new UserService();
 
 function cookieExtractor(req: Request) {
   let token = null;

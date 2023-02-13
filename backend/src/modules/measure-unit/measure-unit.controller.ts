@@ -1,10 +1,9 @@
 import { BaseController } from '../../common/base.controller';
-import { MeasureUnitService, measureUnitServiceInstance } from './measure-unit.service';
+import { MeasureUnit } from './interfaces/measure-unit.interface';
+import { MeasureUnitService } from './measure-unit.service';
 
-class MeasureUnitController<T> extends BaseController<T> {
-  constructor(private measureUnitService: MeasureUnitService<T>) {
+export class MeasureUnitController extends BaseController<MeasureUnit> {
+  constructor(private measureUnitService = new MeasureUnitService()) {
     super(measureUnitService);
   }
 }
-
-export const measureUnitController = new MeasureUnitController(measureUnitServiceInstance);

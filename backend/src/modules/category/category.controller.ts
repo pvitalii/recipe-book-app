@@ -1,10 +1,9 @@
 import { BaseController } from '../../common/base.controller';
-import { categoryServiceInstance, CategoryService } from './category.service';
+import { CategoryService } from './category.service';
+import { Category } from './interfaces/category.interface';
 
-class CategoryController<T> extends BaseController<T> {
-  constructor(private categoryService: CategoryService<T>) {
+export class CategoryController extends BaseController<Category> {
+  constructor(private categoryService = new CategoryService()) {
     super(categoryService);
   }
 }
-
-export const categoryController = new CategoryController(categoryServiceInstance);

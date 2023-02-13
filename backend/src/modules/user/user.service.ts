@@ -1,16 +1,14 @@
-import { HydratedDocument, Model } from 'mongoose';
+import { HydratedDocument } from 'mongoose';
 import { CRUDService } from '../../common/crud.service';
 import { User } from './interfaces/user.interface';
 import { UserModel } from './user.model';
 
-export class UserService<T = User> extends CRUDService<T> {
-  constructor(private userModel: Model<T>) {
-    super(userModel);
+export class UserService extends CRUDService<User> {
+  constructor() {
+    super(UserModel);
   }
 
-  async findUserByEmail(email: string): Promise<HydratedDocument<T> | null> {
-    return this.userModel.findOne({ email });
+  async findUserByEmail(email: string): Promise<HydratedDocument<User> | null> {
+    return UserModel.findOne({ email });
   }
 }
-
-export const userServiceInstance = new UserService(UserModel);

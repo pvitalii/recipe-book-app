@@ -9,5 +9,3 @@ export class HashService {
     return bcrypt.compare(password, hashedPassword);
   }
 }
-
-export const hashServiceInstance = new HashService();

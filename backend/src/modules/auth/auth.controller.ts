@@ -3,30 +3,25 @@ import { Request, Response, NextFunction } from 'express';
 import httpErrors from 'http-errors';
 import { boundMethod } from 'autobind-decorator';
 import { CreateUserDto } from '../user/dto/create-user.dto';
-import { UserService, userServiceInstance } from '../user/user.service';
-import { HashService, hashServiceInstance } from './services/hash.service';
-import { TokenService, tokenServiceInstance } from './services/token.service';
+import { UserService } from '../user/user.service';
+import { HashService } from './services/hash.service';
+import { TokenService } from './services/token.service';
 import { UserSerializer } from '../user/user-serializer';
 import { ResetPasswordDto } from '../user/dto/reset-password.dto';
 import { ConfirmEmailDto } from '../user/dto/confirm-email.dto';
 import { serialize } from '../../common/serialize';
-
-declare global {
-  namespace Express {
-    interface User extends HydratedDocument<import('../user/interfaces/user.interface').User> {}
-  }
-}
+import { User } from '../user/interfaces/user.interface';
 
 interface TokenPair {
   accessToken: string;
   refreshToken: string;
 }
 
-class AuthController {
+export class AuthController {
   constructor(
-    private userService: UserService,
-    private hashService: HashService,
-    private tokenService: TokenService
+    private userService = new UserService(),
+    private hashService = new HashService(),
+    private tokenService = new TokenService()
   ) {}
 
   private putTokensIntoCookie(tokens: TokenPair, res: Response) {
@@ -51,7 +46,9 @@ class AuthController {
 
   @boundMethod
   async login(req: Request, res: Response) {
-    const tokens = await this.tokenService.generateTokensForUser(req.user!);
+    const tokens = await this.tokenService.generateTokensForUser(
+      req.user as HydratedDocument<User>
+    );
     this.putTokensIntoCookie(tokens, res);
     return res.json('Successfull login');
   }
@@ -105,9 +102,3 @@ class AuthController {
     return res.json(serializedUser);
   }
 }
-
-export const authController = new AuthController(
-  userServiceInstance,
-  hashServiceInstance,
-  tokenServiceInstance
-);

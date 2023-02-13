@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
 import httpErrors from 'http-errors';
-import { tokenServiceInstance } from '../../modules/auth/services/token.service';
+import { TokenService } from '../../modules/auth/services/token.service';
+
+const tokenServiceInstance = new TokenService();
 
 export async function processToken(req: Request, res: Response, next: NextFunction) {
   if (req.cookies.accessToken) return next();

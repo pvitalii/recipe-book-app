@@ -1,10 +1,9 @@
 import { BaseController } from '../../common/base.controller';
-import { IngredientService, ingredientServiceInstance } from './ingredient.service';
+import { IngredientService } from './ingredient.service';
+import { Ingredient } from './interfaces/ingredient.interface';
 
-class IngredientController<T> extends BaseController<T> {
-  constructor(private ingredientService: IngredientService<T>) {
+export class IngredientController extends BaseController<Ingredient> {
+  constructor(private ingredientService = new IngredientService()) {
     super(ingredientService);
   }
 }
-
-export const ingredientController = new IngredientController(ingredientServiceInstance);

@@ -3,9 +3,10 @@ import { RoutePaths } from '../../common/consts';
 import { bodyValidator } from '../../middlewares/body-validator';
 import { CreateIngredientDto } from '../../modules/ingredient/dto/create-ingredient.dto';
 import { PutIngredientDto } from '../../modules/ingredient/dto/put-ingredient.dto';
-import { ingredientController } from '../../modules/ingredient/ingredient.controller';
+import { IngredientController } from '../../modules/ingredient/ingredient.controller';
 
 export const ingredientRouter: Router = Router();
+const ingredientController = new IngredientController();
 
 ingredientRouter
   .get(RoutePaths.FIND_ALL, ingredientController.findAll)

@@ -3,9 +3,10 @@ import { RoutePaths } from '../../common/consts';
 import { bodyValidator } from '../../middlewares/body-validator';
 import { CreateRecipeDto } from '../../modules/recipe/dto/create-recipe.dto';
 import { PutRecipeDto } from '../../modules/recipe/dto/put-recipe.dto';
-import { recipeController } from '../../modules/recipe/recipe.controller';
+import { RecipeController } from '../../modules/recipe/recipe.controller';
 
 export const recipeRouter: Router = Router();
+const recipeController = new RecipeController();
 
 recipeRouter
   .get(RoutePaths.FIND_ALL, recipeController.findAll)

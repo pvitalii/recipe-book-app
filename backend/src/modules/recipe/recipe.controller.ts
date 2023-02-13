@@ -1,11 +1,12 @@
 import { boundClass } from 'autobind-decorator';
 import { NextFunction, Request, Response } from 'express';
 import { BaseController } from '../../common/base.controller';
-import { RecipeService, recipeServiceInstance } from './recipe.service';
+import { Recipe } from './interfaces/recipe.interface';
+import { RecipeService } from './recipe.service';
 
 @boundClass
-class RecipeController<T> extends BaseController<T> {
-  constructor(private recipeService: RecipeService<T>) {
+export class RecipeController extends BaseController<Recipe> {
+  constructor(private recipeService = new RecipeService()) {
     super(recipeService);
   }
 
@@ -23,5 +24,3 @@ class RecipeController<T> extends BaseController<T> {
     }
   }
 }
-
-export const recipeController = new RecipeController(recipeServiceInstance);

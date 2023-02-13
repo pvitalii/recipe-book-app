@@ -1,12 +1,12 @@
-import mongoose, { Model } from 'mongoose';
+import mongoose from 'mongoose';
 import { CRUDService } from '../../common/crud.service';
 import { RecipeAggregation } from './interfaces/recipe-aggregation.interface';
 import { Recipe } from './interfaces/recipe.interface';
 import { RecipeModel } from './recipe.model';
 
-export class RecipeService<T = Recipe> extends CRUDService<T> {
-  constructor(private recipeModel: Model<T>) {
-    super(recipeModel);
+export class RecipeService extends CRUDService<Recipe> {
+  constructor() {
+    super(RecipeModel);
   }
 
   private lookupIngredientsAndCategories = [
@@ -29,7 +29,7 @@ export class RecipeService<T = Recipe> extends CRUDService<T> {
   ];
 
   async findAllAndAggregate(): Promise<RecipeAggregation[]> {
-    const recipes = await this.recipeModel.aggregate<RecipeAggregation>([
+    const recipes = await RecipeModel.aggregate<RecipeAggregation>([
       ...this.lookupIngredientsAndCategories,
       {
         $match: {
@@ -42,7 +42,7 @@ export class RecipeService<T = Recipe> extends CRUDService<T> {
   }
 
   async findByIdAndAggregate(id: string) {
-    const recipe = await this.recipeModel.aggregate<RecipeAggregation>([
+    const recipe = await RecipeModel.aggregate<RecipeAggregation>([
       {
         $match: {
           _id: new mongoose.Types.ObjectId(id)
@@ -53,5 +53,3 @@ export class RecipeService<T = Recipe> extends CRUDService<T> {
     return recipe;
   }
 }
-
-export const recipeServiceInstance = new RecipeService(RecipeModel);

@@ -1,10 +1,9 @@
 import { BaseController } from '../../common/base.controller';
-import { ProductService, productServiceInstance } from './product.service';
+import { Product } from './interfaces/product.interface';
+import { ProductService } from './product.service';
 
-class ProductController<T> extends BaseController<T> {
-  constructor(private productService: ProductService<T>) {
+export class ProductController extends BaseController<Product> {
+  constructor(private productService = new ProductService()) {
     super(productService);
   }
 }
-
-export const productController = new ProductController(productServiceInstance);
